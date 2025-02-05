@@ -53,3 +53,15 @@ You can use SimulIDE and open the desired circuit but always will be the main.he
 4. Choose your generated main.hex file.
 5. Start simulation and enjoy!
 
+>### flashing to a board
+Usually I use the Arduino Nano board but if you have a AVR atmega328p, this will run perfectly.
+1. build the hex file
+```sh
+$ make build
+```
+2. Make sure that you have plugged your board into your PC and have `/dev/ttyUSB0` port, if your board is in another serial port, change in Makefile (I'll make this more flexible later)
+3. Run the flash command with avrdude
+```sh
+$ make flash
+```
+4. See your program running in your board!
