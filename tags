@@ -1,0 +1,22 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BAUD	main.cpp	13;"	d	file:
+LED_PIN	main.cpp	15;"	d	file:
+bitclr	main.cpp	8;"	d	file:
+bitflp	main.cpp	9;"	d	file:
+bitset	main.cpp	7;"	d	file:
+bittst	main.cpp	10;"	d	file:
+input	main.cpp	/^    input,$/;"	e	enum:my_mode	file:
+loop	knob.cpp	/^void loop() {$/;"	f
+main	main.cpp	/^int main()$/;"	f
+my_mode	main.cpp	/^enum my_mode {$/;"	g	file:
+myservo	knob.cpp	/^Servo myservo;  \/\/ create servo object to control a servo$/;"	v
+output	main.cpp	/^    output$/;"	e	enum:my_mode	file:
+potpin	knob.cpp	/^int potpin = 0;  \/\/ analog pin used to connect the potentiometer$/;"	v
+set_pin_mode	main.cpp	/^void set_pin_mode(uint8_t dport, uint8_t pin, my_mode mode)$/;"	f
+setup	knob.cpp	/^void setup() {$/;"	f
+val	knob.cpp	/^int val;    \/\/ variable to read the value from the analog pin$/;"	v
