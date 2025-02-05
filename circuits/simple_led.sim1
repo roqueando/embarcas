@@ -1,0 +1,13 @@
+<circuit version="1.1.0-SR1" rev="" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="1" >
+
+<item itemtype="MCU" CircId="mega328PB-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-512,-172" rotation="0" hflip="1" vflip="1" label="mega328PB-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Program="studies/embarqueido/main.hex" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" varList="DDRD,DDRC,DDRB,PIND,PINC,PINB,PORTD,PORTC,PORTB" MainMcu="true" SerialMon="-1" />
+
+<item itemtype="Led" CircId="Led-2" mainComp="false" ShowProp="Color" Show_id="true" Show_Val="true" Pos="-644,-200" rotation="0" hflip="-1" vflip="1" label="LED1" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Green" Grounded="true" Threshold="3.5 V" MaxCurrent="30 mA" Resistance="0.6 Ω" />
+
+<item itemtype="Led" CircId="Led-3" mainComp="false" ShowProp="Color" Show_id="true" Show_Val="true" Pos="-716,-180" rotation="0" hflip="-1" vflip="1" label="Led-3" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Red" Grounded="true" Threshold="1.8 V" MaxCurrent="30 mA" Resistance="0.6 Ω" />
+
+<item itemtype="Connector" uid="Connector-3" startpinid="Led-3-lPin" endpinid="mega328PB-1-PORTD3" pointList="-700,-180,-520,-180,-520,-156" />
+
+<item itemtype="Connector" uid="Connector-8" startpinid="Led-2-lPin" endpinid="mega328PB-1-PORTC2" pointList="-628,-200,-440,-200,-440,-180" />
+
+</circuit>
