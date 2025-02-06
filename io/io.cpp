@@ -2,6 +2,7 @@
 
 void debug_pin(port p)
 {
+    set_port_direction(p);
     digital_write(p, pin_state::HIGH);
 }
 
@@ -22,7 +23,7 @@ void set_port_direction(port p)
     }
 }
 
-void digital_write(port p, pin_state state)
+void digital_write(port p, uint8_t state)
 {
     if (p.direction == mode::OUTPUT) {
         switch (p.choosen_port) {
@@ -42,3 +43,19 @@ void digital_write(port p, pin_state state)
     // TODO: contemplate the INPUT data
 }
 
+void write_port(uint8_t value, available_port p)
+{
+    switch (p) {
+        case available_port::D:
+            PORTD = value;
+            break;
+
+        case available_port::C:
+            PORTC = value;
+            break;
+
+        case available_port::B:
+            PORTB = value;
+            break;
+    }
+}

@@ -1,4 +1,5 @@
 #include "../io/io.h"
+#include <util/delay.h>
 #include "rgb.h"
 
 port get_port(uint8_t pin)
@@ -56,3 +57,13 @@ void rgb_init()
     set_port_direction(led_b_pin);
 }
 
+void blink_rgb() {
+    rgb_color(CYAN);
+    turn_on(CYAN);
+    _delay_ms(5000);
+    turn_off(CYAN);
+    _delay_ms(5000);
+    turn_on(PURPLE);
+    _delay_ms(5000);
+    turn_off(PURPLE);
+}

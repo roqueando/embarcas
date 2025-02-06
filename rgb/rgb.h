@@ -22,5 +22,6 @@ void rgb_init(void);
 void rgb_color(int led);
 void turn_on(int led);
 void turn_off(int led);
+void blink_rgb();
 
 #endif // RGB_H

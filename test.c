@@ -5,9 +5,9 @@
 
 int main()
 {
-    char led = 6;
-    if (led & 4) {
-        printf("led: %b\n", led);
+    char value = 0;
+    if (value & 0x80) {
+        printf("value: %b\n", value);
     }
-    printf("led: %b\n", led);
+    printf("value: %b\n", value);
 }

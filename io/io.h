@@ -33,7 +33,6 @@ struct port
     uint8_t pin;
     available_port choosen_port;
 };
-// ex: port pd2 = {mode::OUTPUT, 2, 'D'};
 
 struct pin_config {
     uint8_t pin;
@@ -56,12 +55,14 @@ struct pin_config {
  * @param {pin_state} state: the pin state if is high or low
  * @returns void
  */
-void digital_write(port, pin_state);
+void digital_write(port, uint8_t);
 
 /*
  * configure a port setting your direction within correct port
  */
 void set_port_direction(port);
+void write_port(uint8_t value, available_port p);
+void debug_pin(port);
 
 
 #endif // IO_H
