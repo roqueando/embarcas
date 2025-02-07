@@ -16,10 +16,12 @@ int main()
     set_port_direction({mode::OUTPUT, 1, available_port::D});
     set_port_direction({mode::OUTPUT, 2, available_port::D});
     set_port_direction({mode::OUTPUT, 3, available_port::D});
+
     so_init();
     //ssd_init();
     while(true) {
         so_write(0x3F);
+        for(time = 0; time < 1000; time++);
         /*
         count++;
         ssd_digit(0, (count) % 10);
