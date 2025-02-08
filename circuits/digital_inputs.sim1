@@ -6,12 +6,12 @@
 
 <item itemtype="Led" CircId="Led-3" mainComp="false" Show_id="false" Show_Val="false" Pos="-340,-148" rotation="270" hflip="1" vflip="1" label="Led-3" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Red" Grounded="true" Threshold="1.8 V" MaxCurrent="30 mA" Resistance="0.6 Ω" />
 
-<item itemtype="Fixed Voltage" CircId="Fixed Voltage-4" mainComp="false" Show_id="false" Show_Val="false" Pos="-120,-68" rotation="180" hflip="1" vflip="1" label="Fixed Voltage-4" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Voltage="5 V" Out="true" />
+<item itemtype="Fixed Voltage" CircId="Fixed Voltage-4" mainComp="false" ShowProp="Voltage" Show_id="false" Show_Val="true" Pos="-120,-72" rotation="180" hflip="1" vflip="1" label="Fixed Voltage-4" idLabPos="-64,-24" labelrot="0" valLabPos="8.28331,-10.3059" valLabRot="180" Voltage="3.3 V" Out="true" />
 
 <item itemtype="Connector" uid="Connector-1" startpinid="Push-2-pinP0" endpinid="mega328PB-1-PORTD0" pointList="-200,-72,-200,-120,-332,-120,-332,-100" />
 
 <item itemtype="Connector" uid="Connector-2" startpinid="Led-3-lPin" endpinid="mega328PB-1-PORTD1" pointList="-340,-132,-340,-100" />
 
-<item itemtype="Connector" uid="Connector-5" startpinid="Fixed Voltage-4-outnod" endpinid="Push-2-switch0pinN" pointList="-136,-68,-168,-68,-168,-72" />
+<item itemtype="Connector" uid="Connector-5" startpinid="Fixed Voltage-4-outnod" endpinid="Push-2-switch0pinN" pointList="-136,-72,-168,-72" />
 
 </circuit>

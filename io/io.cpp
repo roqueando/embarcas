@@ -23,7 +23,7 @@ void set_port_direction(port p)
     }
 }
 
-void digital_write(port p, uint8_t state)
+void digital_write(port p, pin_state state)
 {
     if (p.direction == mode::OUTPUT) {
         switch (p.choosen_port) {
@@ -41,22 +41,19 @@ void digital_write(port p, uint8_t state)
         }
     }
 
-    if (p.direction == mode::INPUT) {
-        switch (p.choosen_port) {
-            case available_port::D:
-                state == pin_state::HIGH ? bitclr(PORTD, p.pin) : bitset(PORTD, p.pin);
-                break;
-
-            case available_port::C:
-                state == pin_state::HIGH ? bitclr(PORTC, p.pin) : bitset(PORTC, p.pin);
-                break;
-
-            case available_port::B:
-                state == pin_state::HIGH ? bitclr(PORTB, p.pin) : bitset(PORTB, p.pin);
-                break;
-        }
-    }
     // TODO: contemplate the INPUT data
+}
+
+int digital_read(port p)
+{
+    switch(p.choosen_port) {
+        case available_port::D:
+            return bittst(PIND, p.pin);
+        case available_port::C:
+            return bittst(PINC, p.pin);
+        case available_port::B:
+            return bittst(PINB, p.pin);
+    }
 }
 
 void write_port(uint8_t value, available_port p)

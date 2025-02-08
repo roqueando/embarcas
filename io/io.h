@@ -55,7 +55,8 @@ struct pin_config {
  * @param {pin_state} state: the pin state if is high or low
  * @returns void
  */
-void digital_write(port, uint8_t);
+void digital_write(port, pin_state);
+int digital_read(port);
 
 /*
  * configure a port setting your direction within correct port
