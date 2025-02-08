@@ -40,6 +40,22 @@ void digital_write(port p, uint8_t state)
                 break;
         }
     }
+
+    if (p.direction == mode::INPUT) {
+        switch (p.choosen_port) {
+            case available_port::D:
+                state == pin_state::HIGH ? bitclr(PORTD, p.pin) : bitset(PORTD, p.pin);
+                break;
+
+            case available_port::C:
+                state == pin_state::HIGH ? bitclr(PORTC, p.pin) : bitset(PORTC, p.pin);
+                break;
+
+            case available_port::B:
+                state == pin_state::HIGH ? bitclr(PORTB, p.pin) : bitset(PORTB, p.pin);
+                break;
+        }
+    }
     // TODO: contemplate the INPUT data
 }
 

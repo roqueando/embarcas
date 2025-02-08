@@ -26,13 +26,13 @@ void ssd_init()
         set_port_direction({mode::OUTPUT, ix, available_port::C});
     }
 
-    // PORTD will handle the digits
-    for (uint8_t i = 0; i < 8; i++) {
-        set_port_direction({mode::OUTPUT, i, available_port::D});
-    }
+    // will be the shift register PORT
+    set_port_direction({mode::OUTPUT, 0, available_port::D});
+    set_port_direction({mode::OUTPUT, 1, available_port::D});
+    set_port_direction({mode::OUTPUT, 2, available_port::D});
 }
 
-void ssd_digit(char position, char value)
+void ssd_digit(int position, char value)
 {
     if (position == 0) { v0 = value; }
     if (position == 1) { v1 = value; }

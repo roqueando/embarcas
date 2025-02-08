@@ -1,0 +1,17 @@
+<circuit version="1.1.0-SR1" rev="" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="1" >
+
+<item itemtype="MCU" CircId="mega328PB-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-364,-92" rotation="0" hflip="1" vflip="1" label="mega328PB-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Program="../main.hex" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" varList="DDRD" MainMcu="true" SerialMon="-1" />
+
+<item itemtype="Push" CircId="Push-2" mainComp="false" Show_id="false" Show_Val="false" Pos="-184,-72" rotation="0" hflip="1" vflip="1" label="Push-2" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
+
+<item itemtype="Led" CircId="Led-3" mainComp="false" Show_id="false" Show_Val="false" Pos="-340,-148" rotation="270" hflip="1" vflip="1" label="Led-3" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Red" Grounded="true" Threshold="1.8 V" MaxCurrent="30 mA" Resistance="0.6 Ω" />
+
+<item itemtype="Fixed Voltage" CircId="Fixed Voltage-4" mainComp="false" Show_id="false" Show_Val="false" Pos="-120,-68" rotation="180" hflip="1" vflip="1" label="Fixed Voltage-4" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Voltage="5 V" Out="true" />
+
+<item itemtype="Connector" uid="Connector-1" startpinid="Push-2-pinP0" endpinid="mega328PB-1-PORTD0" pointList="-200,-72,-200,-120,-332,-120,-332,-100" />
+
+<item itemtype="Connector" uid="Connector-2" startpinid="Led-3-lPin" endpinid="mega328PB-1-PORTD1" pointList="-340,-132,-340,-100" />
+
+<item itemtype="Connector" uid="Connector-5" startpinid="Fixed Voltage-4-outnod" endpinid="Push-2-switch0pinN" pointList="-136,-68,-168,-68,-168,-72" />
+
+</circuit>
