@@ -1,4 +1,5 @@
 # embarcas
+![embarcas](images/embarcas.png)
 
 > embarcas is a projecto for studiying embedded systems, and mark my progress, all in C/C++
 
