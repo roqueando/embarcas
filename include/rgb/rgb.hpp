@@ -1,7 +1,7 @@
-#ifndef RGB_H
-#define RGB_H
+#ifndef RGB_HPP
+#define RGB_HPP
 
-#include "../io/io.h"
+#include <io/io.hpp>
 
 #define OFF 0
 #define RED 1
@@ -24,4 +24,4 @@ void turn_on(int led);
 void turn_off(int led);
 void blink_rgb();
 
-#endif // RGB_H
+#endif // RGB_HPP

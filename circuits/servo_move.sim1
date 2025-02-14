@@ -2,13 +2,13 @@
 
 <item itemtype="MCU" CircId="mega328PB-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-300,-36" rotation="0" hflip="1" vflip="1" label="mega328PB-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Program="../main.hex" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" MainMcu="true" SerialMon="-1" />
 
-<item itemtype="Push" CircId="Push-3" mainComp="false" Show_id="true" Show_Val="false" Pos="-312,-92" rotation="0" hflip="1" vflip="1" label="SW01-AH" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
+<item itemtype="Push" CircId="Push-3" mainComp="false" Show_id="true" Show_Val="false" Pos="-312,-92" rotation="0" hflip="1" vflip="1" label="SW01-AH" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="true" Poles="1" />
 
-<item itemtype="Push" CircId="Push-4" mainComp="false" Show_id="true" Show_Val="false" Pos="-216,-92" rotation="0" hflip="1" vflip="1" label="SW01-H" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
+<item itemtype="Push" CircId="Push-4" mainComp="false" Show_id="true" Show_Val="false" Pos="-216,-92" rotation="0" hflip="1" vflip="1" label="SW01-H" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="true" Poles="1" />
 
-<item itemtype="Fixed Voltage" CircId="Fixed Voltage-6" mainComp="false" Show_id="false" Show_Val="false" Pos="-472,-68" rotation="0" hflip="1" vflip="1" label="Fixed Voltage-6" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Voltage="5 V" Out="true" />
+<item itemtype="Fixed Voltage" CircId="Fixed Voltage-6" mainComp="false" Show_id="false" Show_Val="false" Pos="-472,-68" rotation="0" hflip="1" vflip="1" label="Fixed Voltage-6" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Voltage="3.3 V" Out="true" />
 
-<item itemtype="Servo" CircId="Servo-13" mainComp="false" Show_id="true" Show_Val="false" Pos="-384,48" rotation="990" hflip="1" vflip="1" label="SERVO1" idLabPos="-16,-40" labelrot="0" valLabPos="-16,20" valLabRot="0" Speed="0.2 _s/60º" MinPulse="1000 _µs" MaxPulse="2000 _µs" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" />
+<item itemtype="Servo" CircId="Servo-13" mainComp="false" Show_id="true" Show_Val="false" Pos="-384,48" rotation="990" hflip="1" vflip="1" label="SERVO1" idLabPos="-16,-40" labelrot="0" valLabPos="-16,20" valLabRot="0" Speed="0.2 _s/60º" MinPulse="1000 _µs" MaxPulse="2000 _µs" Input_High_V="4.8 V" Input_Low_V="4.8 V" Input_Imped="1000 MΩ" />
 
 <item itemtype="Ground" CircId="Ground-17" mainComp="false" Show_id="false" Show_Val="false" Pos="-480,-32" rotation="90" hflip="1" vflip="1" label="Ground-17" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
 
@@ -20,19 +20,17 @@
 
 <item itemtype="Ground" CircId="Ground-22" mainComp="false" Show_id="false" Show_Val="false" Pos="-340,248" rotation="0" hflip="1" vflip="1" label="Ground-22" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
 
+<item itemtype="Led" CircId="Led-25" mainComp="false" Show_id="true" Show_Val="false" Pos="-380,-28" rotation="540" hflip="1" vflip="1" label="DEBUG_LED1" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Yellow" Grounded="true" Threshold="2.4 V" MaxCurrent="4 mA" Resistance="0.6 Ω" />
+
+<item itemtype="DcMotor" CircId="DcMotor-36" mainComp="false" Show_id="true" Show_Val="false" Pos="-492,140" rotation="0" hflip="1" vflip="1" label="DcMotor-36" idLabPos="-22,-48" labelrot="0" valLabPos="-14,36" valLabRot="0" RPM_Nominal="60 _RPM" Volt_Nominal="1.5 V" Resistance="100 Ω" />
+
 <item itemtype="Node" CircId="Node-7" mainComp="false" Pos="-332,-128" />
 
 <item itemtype="Node" CircId="Node-16" mainComp="false" Pos="-360,-68" />
 
-<item itemtype="Node" CircId="Node-24" mainComp="false" Pos="-332,-44" />
-
 <item itemtype="Connector" uid="Connector-3" startpinid="Node-7-1" endpinid="Push-4-pinP0" pointList="-332,-128,-244,-128,-244,-92,-232,-92" />
 
 <item itemtype="Connector" uid="Connector-5" startpinid="Node-7-2" endpinid="Push-3-pinP0" pointList="-332,-128,-332,-92,-328,-92" />
-
-<item itemtype="Connector" uid="Connector-7" startpinid="Push-3-switch0pinN" endpinid="mega328PB-1-PORTD1" pointList="-296,-92,-276,-92,-276,-44" />
-
-<item itemtype="Connector" uid="Connector-12" startpinid="Push-4-switch0pinN" endpinid="mega328PB-1-PORTD0" pointList="-200,-92,-200,-64,-268,-64,-268,-44" />
 
 <item itemtype="Connector" uid="Connector-15" startpinid="Node-16-1" endpinid="Servo-13-in0" pointList="-360,-68,-440,-68,-440,96,-400,96" />
 
@@ -46,12 +44,14 @@
 
 <item itemtype="Connector" uid="Connector-21" startpinid="Led-19-lPin" endpinid="mega328PB-1-PORTC1" pointList="-164,-32,-180,-32,-180,-20,-204,-20" />
 
-<item itemtype="Connector" uid="Connector-25" startpinid="Oscope-20-PinG" endpinid="Ground-22-Gnd" pointList="-304,220,-340,220,-340,232" />
+<item itemtype="Connector" uid="Connector-35" startpinid="Push-3-switch0pinN" endpinid="mega328PB-1-PORTD7" pointList="-296,-92,-296,-68,-176,-68,-176,72,-268,72,-268,60" />
 
-<item itemtype="Connector" uid="Connector-31" startpinid="Oscope-20-Pin0" endpinid="Node-24-1" pointList="-304,108,-332,108,-332,-44" />
+<item itemtype="Connector" uid="Connector-36" startpinid="Push-4-switch0pinN" endpinid="mega328PB-1-PORTB0" pointList="-200,-92,-188,-92,-188,68,-260,68,-260,60" />
 
-<item itemtype="Connector" uid="Connector-32" startpinid="Servo-13-in2" endpinid="Node-24-0" pointList="-368,96,-368,128,-456,128,-456,-44,-332,-44" />
+<item itemtype="Connector" uid="Connector-37" startpinid="Led-25-lPin" endpinid="mega328PB-1-PORTD4" pointList="-364,-28,-316,-28,-316,-12,-308,-12" />
 
-<item itemtype="Connector" uid="Connector-33" startpinid="Node-24-2" endpinid="mega328PB-1-PORTD2" pointList="-332,-44,-284,-44" />
+<item itemtype="Connector" uid="Connector-56" startpinid="Oscope-20-PinG" endpinid="Ground-22-Gnd" pointList="-304,220,-340,220,-340,232" />
+
+<item itemtype="Connector" uid="Connector-63" startpinid="mega328PB-1-PORTD3" endpinid="Servo-13-in2" pointList="-308,-20,-328,-20,-328,96,-368,96" />
 
 </circuit>
