@@ -31,7 +31,7 @@ target_include_directories("${TARGET_NAME}" PRIVATE include)
 add_subdirectory(src)
 
 add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
-  COMMAND avr-objcopy -O ihex ${PROJECT_NAME} "${PROJECT_NAME}.hex"
+  COMMAND avr-objcopy -O ihex ${TARGET_NAME} "${PROJECT_NAME}.hex"
   COMMENT "Generating HEX file..."
 )
 

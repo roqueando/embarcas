@@ -9,8 +9,11 @@
 the project still in development and the next updates will be coded in the following tasks:
 - [x] led blinky
 - [x] RGB led blinky
-- [ ] SimulIDE circuits and kicad eletronic schematics
-- [ ] Seven Segments Display (SSD)
+- [x] SimulIDE circuits
+- [x] Seven Segments Display (SSD)
+- [x] Shift Register (SR)
+- [ ] LCD Display
+- [ ] KiCAD eletronic schematics
 - [ ] more...
 
 ## 💻 pre-requisites
