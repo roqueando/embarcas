@@ -1,5 +1,4 @@
-#ifndef RGB_HPP
-#define RGB_HPP
+#pragma once
 
 #include <io/io.hpp>
 
@@ -24,4 +23,3 @@ void turn_on(int led);
 void turn_off(int led);
 void blink_rgb();
 
-#endif // RGB_HPP

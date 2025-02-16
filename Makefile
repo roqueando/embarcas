@@ -11,7 +11,7 @@ $(BUILDDIR)/Makefile:
 build-test:
 	@gcc test.c -o test && ./test
 
-flash:
-	@avrdude -c arduino -p atmega328p -P /dev/ttyUSB0 -b 115200 -U flash:w:main.hex:i
+flash: build
+	@avrdude -c arduino -p atmega328p -P /dev/$(PORT) -b 115200 -U flash:w:build/debug/embarcas.hex:i
 
-.PHONY: build
+.PHONY: build flash

@@ -1,9 +1,14 @@
 #include <io/io.hpp>
 
-uint8_t bitset(uint8_t arg, uint8_t bit) { return arg |= 1<<bit; }
-uint8_t bitclr(uint8_t arg, uint8_t bit) { return arg &= ~(1<<bit); }
-uint8_t bitflp(uint8_t arg, uint8_t bit) { return arg ^= 1<<bit; }
-uint8_t bittst(uint8_t arg, uint8_t bit) { return arg & 1<<bit; }
+//#define bitset(arg, bit) ((arg) |= (1<<bit))
+//#define bitclr(arg, bit) (arg &= ~(1<<bit))
+//#define bitflp(arg, bit) (arg ^= (1<<bit))
+//#define bittst(arg, bit) (arg & (1<<bit))
+
+//inline uint8_t bitset(volatile uint8_t *arg, uint8_t bit) { return *arg |= (1<<bit); }
+//inline uint8_t bitclr(volatile uint8_t *arg, uint8_t bit) { return *arg &= ~(1<<bit); }
+//inline uint8_t bitflp(volatile uint8_t *arg, uint8_t bit) { return *arg ^= (1<<bit); }
+//inline uint8_t bittst(volatile uint8_t *arg, uint8_t bit) { return *arg & (1<<bit); }
 
 void debug_pin(port p)
 {
@@ -15,7 +20,11 @@ void set_port_direction(port p)
 {
     switch (p.choosen_port) {
         case available_port::D:
-            p.direction == pin_mode::OUTPUT ? bitset(DDRD, p.pin) : bitclr(DDRD, p.pin);
+            if (p.direction == pin_mode::OUTPUT) {
+                bitset(DDRD, p.pin);
+            } else {
+                bitclr(DDRD, p.pin);
+            }
             break;
 
         case available_port::C:
@@ -73,5 +82,20 @@ void write_port(uint8_t value, available_port p)
         case available_port::B:
             bitset(PORTB, value);
             break;
+    }
+}
+
+void delay_micro(int a)
+{
+    volatile int i;
+    for(i=0; i < (a * 2); i++);
+}
+
+void delay_mili(int a)
+{
+    volatile int i;
+    for(i=0; i < a; i++)
+    {
+        delay_micro(1000);
     }
 }

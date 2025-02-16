@@ -1,20 +1,19 @@
-#ifndef IO_HPP
-#define IO_HPP
+#pragma once
 
 #include <avr/io_atmega328p.hpp>
 #include <stdint.h>
 
-//#define bitset(arg, bit) (arg |= 1<<bit)
-//#define bitclr(arg, bit) (arg &= ~(1<<bit))
-//#define bitflp(arg, bit) (arg ^= 1<<bit)
-//#define bittst(arg, bit) (arg & 1<<bit)
+#define bitset(arg, bit) (arg |= 1<<bit)
+#define bitclr(arg, bit) (arg &= ~(1<<bit))
+#define bitflp(arg, bit) (arg ^= 1<<bit)
+#define bittst(arg, bit) (arg & 1<<bit)
 
 #define DEBUG_PIN PD3
 
-uint8_t bitset(uint8_t arg, uint8_t bit);
-uint8_t bitclr(uint8_t arg, uint8_t bit);
-uint8_t bitflp(uint8_t arg, uint8_t bit);
-uint8_t bittst(uint8_t arg, uint8_t bit);
+//uint8_t bitset(volatile uint8_t arg, uint8_t bit);
+//uint8_t bitclr(volatile uint8_t arg, uint8_t bit);
+//uint8_t bitflp(volatile uint8_t arg, uint8_t bit);
+//uint8_t bittst(volatile uint8_t arg, uint8_t bit);
 
 enum pin_mode {
     INPUT,
@@ -61,5 +60,7 @@ void set_port_direction(port p);
 void write_port(uint8_t value, available_port p);
 void debug_pin(port p);
 
+void delay_micro(int a);
+void delay_mili(int a);
 
-#endif // IO_HPP
+

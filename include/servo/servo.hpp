@@ -1,5 +1,5 @@
-#ifndef SERVO_HPP
-#define SERVO_HPP
+#pragma once
+
 #include <io/io.hpp>
 
 // BUTTONS
@@ -22,4 +22,3 @@ void turn_clockwise();
 void turn_counter_clockwise();
 void motor_on(int side);
 
-#endif // SERVO_HPP

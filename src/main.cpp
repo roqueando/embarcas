@@ -1,14 +1,14 @@
 #include <stdbool.h>
 #include <io/io.hpp>
-#include <servo/servo.hpp>
+#include <spi/spi.hpp>
 
 int main()
 {
-    servo_init();
+    shift_out_init();
     while (true)
     {
-        turn_clockwise();
-        turn_counter_clockwise();
+        send_to_lcd(0x80, true);
+        send_to_lcd('H', false);
     }
     return 0;
 }

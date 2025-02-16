@@ -1,6 +1,6 @@
 <circuit version="1.1.0-SR1" rev="" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="1" >
 
-<item itemtype="MCU" CircId="mega328PB-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-424,-224" rotation="0" hflip="1" vflip="1" label="mega328PB-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Program="../main.hex" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" varList="DDRD" MainMcu="false" SerialMon="-1" />
+<item itemtype="MCU" CircId="mega328PB-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-424,-224" rotation="0" hflip="1" vflip="1" label="mega328PB-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" varList="DDRD" MainMcu="false" SerialMon="-1" />
 
 <item itemtype="Push" CircId="Push-2" mainComp="false" Show_id="false" Show_Val="false" Pos="-224,-188" rotation="0" hflip="1" vflip="1" label="Push-2" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
 
@@ -12,9 +12,21 @@
 
 <item itemtype="Fixed Voltage" CircId="Fixed Voltage-6" mainComp="false" ShowProp="Voltage" Show_id="false" Show_Val="true" Pos="-168,-264" rotation="180" hflip="1" vflip="1" label="Fixed Voltage-6" idLabPos="-64,-24" labelrot="0" valLabPos="8.28331,-10.3059" valLabRot="180" Voltage="3.3 V" Out="true" />
 
-<item itemtype="Hd44780" CircId="Hd44780-40" mainComp="false" Show_id="true" Show_Val="false" Pos="16,124" rotation="0" hflip="1" vflip="1" label="Hd44780-40" idLabPos="70,-82" labelrot="0" valLabPos="-16,20" valLabRot="0" Rows="2" Cols="16" />
+<item itemtype="Hd44780" CircId="Hd44780-40" mainComp="false" Show_id="true" Show_Val="false" Pos="72,148" rotation="0" hflip="1" vflip="1" label="Hd44780-40" idLabPos="70,-82" labelrot="0" valLabPos="-16,20" valLabRot="0" Rows="2" Cols="16" />
 
-<item itemtype="MCU" CircId="mega328PB-41" mainComp="false" Show_id="true" Show_Val="false" Pos="-116,128" rotation="0" hflip="1" vflip="1" label="mega328PB-41" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Program="../main.hex" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" varList="DDRD" MainMcu="true" SerialMon="-1" />
+<item itemtype="MCU" CircId="mega328PB-41" mainComp="false" Show_id="true" Show_Val="false" Pos="-128,188" rotation="0" hflip="1" vflip="1" label="mega328PB-41" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="16 MHz" Program="../build/debug/embarcas.hex" Auto_Load="false" saveEepr="true" Ext_Osc="false" Wdt_enabled="false" Clk_Out="false" varList="DDRD" MainMcu="true" SerialMon="-1" />
+
+<item itemtype="Resistor" CircId="Resistor-65" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="96,212" rotation="270" hflip="1" vflip="1" label="Resistor-65" idLabPos="-16,-24" labelrot="0" valLabPos="-16,6" valLabRot="0" Resistance="100 Ω" />
+
+<item itemtype="Ground" CircId="Ground-66" mainComp="false" Show_id="false" Show_Val="false" Pos="96,272" rotation="0" hflip="1" vflip="1" label="Ground-66" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="Node" CircId="Node-68" mainComp="false" Pos="96,164" />
+
+<item itemtype="Node" CircId="Node-69" mainComp="false" Pos="96,168" />
+
+<item itemtype="Node" CircId="Node-70" mainComp="false" Pos="96,172" />
+
+<item itemtype="Node" CircId="Node-71" mainComp="false" Pos="96,176" />
 
 <item itemtype="Connector" uid="Connector-2" startpinid="Led-3-lPin" endpinid="mega328PB-1-PORTD1" pointList="-400,-264,-400,-232" />
 
@@ -24,26 +36,36 @@
 
 <item itemtype="Connector" uid="Connector-7" startpinid="Switch-5-pinP0" endpinid="mega328PB-1-PORTD0" pointList="-240,-264,-392,-264,-392,-232" />
 
-<item itemtype="Connector" uid="Connector-43" startpinid="Hd44780-40-PinRS" endpinid="mega328PB-41-PORTC0" pointList="32,132,32,152,-20,152" />
+<item itemtype="Connector" uid="Connector-139" startpinid="mega328PB-41-PORTD6" endpinid="Hd44780-40-PinRS" pointList="-104,284,-104,292,88,292,88,156" />
 
-<item itemtype="Connector" uid="Connector-44" startpinid="Hd44780-40-PinRW" endpinid="mega328PB-41-PORTC1" pointList="40,132,40,144,-20,144" />
+<item itemtype="Connector" uid="Connector-140" startpinid="Resistor-65-lPin" endpinid="Ground-66-Gnd" pointList="96,228,96,256" />
 
-<item itemtype="Connector" uid="Connector-45" startpinid="Hd44780-40-PinEn" endpinid="mega328PB-41-PORTC2" pointList="48,132,48,160,0,160,0,116,-44,116,-44,120" />
+<item itemtype="Connector" uid="Connector-142" startpinid="mega328PB-41-PORTD7" endpinid="Hd44780-40-PinEn" pointList="-96,284,-96,300,104,300,104,156" />
 
-<item itemtype="Connector" uid="Connector-46" startpinid="Hd44780-40-dataPin0" endpinid="mega328PB-41-PORTD0" pointList="56,132,56,244,-140,244,-140,104,-84,104,-84,120" />
+<item itemtype="Connector" uid="Connector-146" startpinid="Hd44780-40-dataPin0" endpinid="Node-68-1" pointList="112,156,112,164,96,164" />
 
-<item itemtype="Connector" uid="Connector-47" startpinid="Hd44780-40-dataPin1" endpinid="mega328PB-41-PORTD1" pointList="64,132,64,252,-148,252,-148,92,-92,92,-92,120" />
+<item itemtype="Connector" uid="Connector-148" startpinid="Node-68-2" endpinid="Hd44780-40-PinRW" pointList="96,164,96,156" />
 
-<item itemtype="Connector" uid="Connector-48" startpinid="Hd44780-40-dataPin2" endpinid="mega328PB-41-PORTD2" pointList="72,132,72,260,-156,260,-156,84,-100,84,-100,120" />
+<item itemtype="Connector" uid="Connector-149" startpinid="Hd44780-40-dataPin1" endpinid="Node-69-1" pointList="120,156,120,168,96,168" />
 
-<item itemtype="Connector" uid="Connector-65" startpinid="Hd44780-40-dataPin3" endpinid="mega328PB-41-PORTD3" pointList="80,132,80,268,-164,268,-164,144,-124,144" />
+<item itemtype="Connector" uid="Connector-151" startpinid="Node-69-2" endpinid="Node-68-0" pointList="96,168,96,164" />
 
-<item itemtype="Connector" uid="Connector-66" startpinid="Hd44780-40-dataPin4" endpinid="mega328PB-41-PORTD4" pointList="88,132,88,276,-172,276,-172,152,-124,152" />
+<item itemtype="Connector" uid="Connector-152" startpinid="Hd44780-40-dataPin2" endpinid="Node-70-1" pointList="128,156,128,172,96,172" />
 
-<item itemtype="Connector" uid="Connector-69" startpinid="Hd44780-40-dataPin5" endpinid="mega328PB-41-PORTD5" pointList="96,132,96,284,-100,284,-100,224" />
+<item itemtype="Connector" uid="Connector-154" startpinid="Node-70-2" endpinid="Node-69-0" pointList="96,172,96,168" />
 
-<item itemtype="Connector" uid="Connector-70" startpinid="Hd44780-40-dataPin6" endpinid="mega328PB-41-PORTD6" pointList="104,132,104,292,-92,292,-92,224" />
+<item itemtype="Connector" uid="Connector-155" startpinid="Hd44780-40-dataPin3" endpinid="Node-71-1" pointList="136,156,136,176,96,176" />
 
-<item itemtype="Connector" uid="Connector-71" startpinid="Hd44780-40-dataPin7" endpinid="mega328PB-41-PORTD7" pointList="112,132,112,300,-84,300,-84,224" />
+<item itemtype="Connector" uid="Connector-156" startpinid="Resistor-65-rPin" endpinid="Node-71-0" pointList="96,196,96,176" />
+
+<item itemtype="Connector" uid="Connector-157" startpinid="Node-71-2" endpinid="Node-70-0" pointList="96,176,96,172" />
+
+<item itemtype="Connector" uid="Connector-158" startpinid="Hd44780-40-dataPin4" endpinid="mega328PB-41-PORTB3" pointList="144,156,144,308,-64,308,-64,284" />
+
+<item itemtype="Connector" uid="Connector-159" startpinid="Hd44780-40-dataPin5" endpinid="mega328PB-41-PORTB1" pointList="152,156,152,312,-80,312,-80,284" />
+
+<item itemtype="Connector" uid="Connector-160" startpinid="Hd44780-40-dataPin6" endpinid="mega328PB-41-PORTB0" pointList="160,156,160,316,-88,316,-88,284" />
+
+<item itemtype="Connector" uid="Connector-161" startpinid="Hd44780-40-dataPin7" endpinid="mega328PB-41-PORTB2" pointList="168,156,168,320,-72,320,-72,284" />
 
 </circuit>
