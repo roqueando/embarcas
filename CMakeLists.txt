@@ -7,14 +7,12 @@ project(
   LANGUAGES C
   )
 
+
 set(TARGET_NAME "${PROJECT_NAME}-bin")
-set(MCU atmega328p)
+set(MCU attiny85)
 set(BAUD_RATE 9600)
 set(F_CPU 16000000UL)
-set(CMAKE_C_FLAGS "-mmcu=${MCU} -DF_CPU=${F_CPU} -Os -Wall -Wextra -std=c11")
-set(CMAKE_EXE_LINKER_FLAGS "-mmcu=${MCU}")
 
-set(CMAKE_C_COMPILER avr-gcc)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 

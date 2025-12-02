@@ -1,14 +1,16 @@
 #pragma once
 
-#include <avr/io_atmega328p.hpp>
+//#include <avr/io_atmega328p.h>
+#include <avr/iotnx5.h>
 #include <stdint.h>
 
-#define bitset(arg, bit) (arg |= 1<<bit)
-#define bitclr(arg, bit) (arg &= ~(1<<bit))
-#define bitflp(arg, bit) (arg ^= 1<<bit)
-#define bittst(arg, bit) (arg & 1<<bit)
+//#define bitset(arg, bit) (arg |= 1<<bit)
+//#define bitclr(arg, bit) (arg &= ~(1<<bit))
 
-#define DEBUG_PIN PD3
+#define BIT_SET(REG, BIT)    ((REG) |= (1 << (BIT)))
+#define BIT_CLEAR(REG, BIT)  ((REG) &= ~(1 << (BIT)))
+#define BIT_TOGGLE(REG, BIT) ((REG) ^= (1 << (BIT)))
+#define BIT_CHECK(REG, BIT)  ((REG) &  (1 << (BIT)))
 
 //uint8_t bitset(volatile uint8_t arg, uint8_t bit);
 //uint8_t bitclr(volatile uint8_t arg, uint8_t bit);
@@ -50,15 +52,15 @@ struct pin_config {
  * @param {pin_state} state: the pin state if is high or low
  * @returns void
  */
-void digital_write(port p, enum pin_state state);
-int digital_read(port p);
+void digital_write(struct port p, enum pin_state state);
+int digital_read(struct port p);
 
 /*
  * configure a port setting your direction within correct port
  */
-void set_port_direction(port p);
-void write_port(uint8_t value, available_port p);
-void debug_pin(port p);
+void set_port_direction(struct port p);
+void write_port(uint8_t value, enum available_port p);
+void debug_pin(struct port p);
 
 void delay_micro(int a);
 void delay_mili(int a);
