@@ -7,7 +7,7 @@ build: $(BUILDDIR)/Makefile
 
 
 $(BUILDDIR)/Makefile:
-	@cmake -DCMAKE_BUILD_TYPE=Debug -B build/debug -S . -DCMAKE_TOOLCHAIN_FILE=cmake/avr-toolchain.cmake
+	@cmake -DCMAKE_BUILD_TYPE=Debug -B build/debug
 
 build-test:
 	@gcc test.c -o test && ./test

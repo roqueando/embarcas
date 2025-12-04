@@ -13,6 +13,8 @@ set(MCU attiny85)
 set(BAUD_RATE 9600)
 set(F_CPU 16000000UL)
 
+
+set(CMAKE_C_COMPILER avr-gcc)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 

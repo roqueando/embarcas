@@ -30,6 +30,7 @@
 
 /* avr/iotnx5.h - definitions for ATtiny25, ATtiny45 and ATtiny85 */
 
+#include <stdint.h>
 #ifndef _AVR_IOTNX5_H_
 #define _AVR_IOTNX5_H_ 1
 
@@ -43,7 +44,7 @@
 #  endif
 #endif
 
-#define _SFR_IO8(io_addr) ((io_addr) + __SFR_OFFSET)
+#define _SFR_IO8(io_addr) (*(volatile uint8_t *)((io_addr) + __SFR_OFFSET))
 
 #ifndef _AVR_IOXXX_H_
 #  define _AVR_IOXXX_H_ "iotnx5.h"
