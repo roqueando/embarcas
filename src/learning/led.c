@@ -1,10 +1,8 @@
-#include <avr/iotnx5.h>
-#include <io/io.h>
-#include <learning/led.h>
+#include <avr/io.h>
+#include "io.h"
+#include "led.h"
 #include <stdint.h>
 #include <util/delay.h>
-
-#define 	F_CPU   1000000UL
 
 void led_array_init(led_blink_t leds) {
   led_init(leds.green);
@@ -34,9 +32,9 @@ void led_init(uint8_t port) { bitset(DDRB, port); }
 
 void led_blink(uint8_t port) {
   led_high(port);
-  _delay_ms(100);
+  _delay_ms(1000); // FIXME: change to our delay
   led_low(port);
-  _delay_ms(100);
+  _delay_ms(1000);
 }
 
 void led_high(uint8_t port) { bitset(PORTB, port); }

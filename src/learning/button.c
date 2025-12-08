@@ -1,8 +1,8 @@
-#include <learning/button.h>
+#include "button.h"
 #include <stdint.h>
 #include <util/delay.h>
-#include <avr/iotnx5.h>
-#include <io/io.h>
+#include <avr/io.h>
+#include "io.h"
 
 void button_init(uint8_t port) {
   bitclr(DDRB, port);
