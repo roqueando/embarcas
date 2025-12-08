@@ -8,6 +8,9 @@
 
 #include <simavr/avr/avr_mcu_section.h>
 
+
+uint32_t another_last_time = 0;
+
 // this is for VCD
 const struct avr_mmcu_vcd_trace_t _mytrace[] _MMCU_ = {
     { AVR_MCU_VCD_SYMBOL("PORTB"), .what = (void*)&PORTB },
@@ -15,21 +18,23 @@ const struct avr_mmcu_vcd_trace_t _mytrace[] _MMCU_ = {
     { AVR_MCU_VCD_SYMBOL("TCNT0"),  .what = (void*)&TCNT0 },
 };
 
-volatile static uint32_t ms_counter = 0;
-
-uint32_t last_time = 0;
 
 int main() {
   timer_init();
 
   led_init(PB2);
+  led_init(PB3);
+
+  button_init(PB1);
 
   while (1) {
-    uint32_t current_time = timer();
-
-    if ((current_time - last_time) >= 1000) {
-      bitflp(PORTB, PB2);
-      last_time = current_time;
+    // do something else
+    if (!button_pressed(PB1)) {
+      uint32_t current_time2 = timer();
+      if ((current_time2 - another_last_time) >= 1000) {
+        bitflp(PORTB, PB3);
+        another_last_time = current_time2;
+      }
     }
   }
   /*

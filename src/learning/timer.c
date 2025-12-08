@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 volatile static uint32_t ms_counter = 0;
+uint32_t last_time = 0;
 
 void timer_init() {
   cli();
@@ -35,6 +36,11 @@ void timer_init() {
 
 ISR(TIMER0_COMPA_vect) {
   ms_counter++;
+  uint32_t current_time = timer();
+  if ((current_time - last_time) >= 1000) {
+    bitflp(PORTB, PB2);
+    last_time = current_time;
+  }
 }
 
 uint32_t timer() {
