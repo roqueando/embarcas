@@ -4,17 +4,18 @@
 #include "io.h"
 #include <stdint.h>
 
-volatile static uint32_t ms_counter = 0;
-uint32_t last_time = 0;
 
 void timer_init() {
   cli();
   //1. CTC mode => clear timer on compare mode
-  TCCR0A = (1 << WGM00);
+  TCCR0A = (1 << WGM01);
+  bitset(TCCR0A, COM0A0);
+
+  bitset(DDRB, PB0);
 
   // compares
-  OCR0A = 249; // custom overflow flag
-  OCR0B = 0xFF;
+  OCR0A = 200; // custom overflow flag
+  OCR0B = 200;
 
   // reset counter  
   TCNT0 = 0;
@@ -29,27 +30,18 @@ void timer_init() {
 
   // enabling the interrupt
   TIMSK = (1<<OCIE0A);
+  TIMSK = (1<<OCIE0B);
 
   // activate global interrupts
   sei();
 }
 
 ISR(TIMER0_COMPA_vect) {
-  ms_counter++;
-  uint32_t current_time = timer();
-  if ((current_time - last_time) >= 1000) {
-    bitflp(PORTB, PB2);
-    last_time = current_time;
-  }
+  OCR0A = 160;
+  TCNT0 = 0;
 }
 
-uint32_t timer() {
-  uint32_t time;
-  cli(); // stop all interrupts
-
-  time = ms_counter;
-
-  sei(); // start all interrupts
-  return time;  
+ISR(TIMER0_COMPB_vect) {
+  OCR0B = 40;
 }
 
