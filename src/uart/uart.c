@@ -11,23 +11,42 @@
 
 static uart_t uart;
 
+static void delay_us_runtime(uint16_t us) {
+    while (us--) {
+        __builtin_avr_delay_cycles(16);
+    }
+}
+
 uart_t uart_init(uart_config_t config) {
     DDRB |= (1 << config.tx_pin);
     DDRB &= ~(1 << config.rx_pin);
-    PORTB &= ~(1 << config.rx_pin);
+
+    // Set TX pin HIGH (idle state for UART)
+    PORTB |= (1 << config.tx_pin);
+    // Enable pull-up on RX pin
+    PORTB |= (1 << config.rx_pin);
 
     uart.config = config;
     return uart;
 }
 
 void uart_putc(uart_t *uart, uint8_t data) {
+    uint16_t bit_delay = 1000000UL / uart->config.baudrate;
+
+    PORTB &= ~(1 << uart->config.tx_pin);
+    delay_us_runtime(bit_delay);
+
     for (uint8_t i = 0; i < 8; i++) {
         if (data & (1 << i)) {
             PORTB |= (1 << uart->config.tx_pin);
         } else {
             PORTB &= ~(1 << uart->config.tx_pin);
         }
+        delay_us_runtime(bit_delay);
     }
+
+    PORTB |= (1 << uart->config.tx_pin);
+    delay_us_runtime(bit_delay);
 }
 
 void uart_puts(uart_t *uart, const char *str) {
@@ -38,21 +57,33 @@ void uart_puts(uart_t *uart, const char *str) {
 }
 
 uint8_t uart_getc(uart_t *uart, uint8_t *data, uint32_t timeout_us) {
-    uint32_t half_bit = (uart->config.baudrate / 2);
-    uint32_t start;
+    uint16_t bit_delay = 1000000UL / uart->config.baudrate;
+    uint16_t half_bit = bit_delay / 2;
+    uint8_t received_byte = 0;
 
-    PORTB &= ~(1 << uart->config.rx_pin);
+    for (uint32_t start = 0; start < timeout_us; start++) {
+        if (!(PINB & (1 << uart->config.rx_pin))) {
+            delay_us_runtime(half_bit);
 
-    for (start = 0; start < timeout_us; start++) {
-        if (PINB & (1 << uart->config.rx_pin)) {
-            *data = (PINB >> uart->config.rx_pin) & 1;
+            for (uint8_t i = 0; i < 8; i++) {
+                delay_us_runtime(bit_delay);
+                if (PINB & (1 << uart->config.rx_pin)) {
+                    received_byte |= (1 << i);
+                }
+            }
+
+            delay_us_runtime(bit_delay);
+
+            *data = received_byte;
             return 1;
         }
+        delay_us_runtime(1);
     }
 
     return 0;
 }
 
 uint8_t uart_available(uart_t *uart) {
-    return PINB & (1 << uart->config.rx_pin);
+    // Start bit detected when RX line is LOW
+    return !(PINB & (1 << uart->config.rx_pin));
 }
