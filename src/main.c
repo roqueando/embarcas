@@ -21,8 +21,7 @@ int main(void) {
 
     _delay_ms(500);
 
-    uart_puts(&uart, "UART Test: ATtiny85\r\n");
-    uart_puts(&uart, "ABC123456789\r\n");
+    uart_puts(&uart, "EMBARCAS INITIALIZING...\r\n");
 
     i2c_t i2c = i2c_init((i2c_config_t){
         .sda_pin = SDA_PIN,
@@ -30,6 +29,7 @@ int main(void) {
         .timeout_us = 10000
     });
 
+    /*
     uart_puts(&uart, "I2C Scanner:\r\n");
     uint8_t data;
 
@@ -66,8 +66,7 @@ int main(void) {
 
     while (1) {
     }
-    /*
-    i2c_t i2c;
+    */
     ssd1780_t display;
     ssd1780_status_t status;
     uint8_t retries;
@@ -81,7 +80,6 @@ int main(void) {
     _delay_ms(100);
 
     for (retries = 0; retries < 3; retries++) {
-
         status = ssd1780_init(&display, (ssd1780_config_t){
             .width = 128,
             .height = 64,
@@ -92,7 +90,10 @@ int main(void) {
         _delay_ms(10);
 
         if (status == SSD1780_OK) {
+            uart_puts(&uart, "[SSD1780] OK\r\n");
             break;
+        } else {
+            uart_puts(&uart, "[...]");
         }
         _delay_ms(100);
     }
@@ -114,17 +115,29 @@ int main(void) {
 
 
     _delay_ms(2000);
-    while (1) {
-        _delay_ms(100);
-
-        status = ssd1780_display_on(&display);
-
-        _delay_ms(200);
-
-        status = ssd1780_clear(&display, SSD1780_COLOR_BLACK);
-        _delay_ms(100);
-
-        status = ssd1780_draw_box(&display, 10, 10, 117, 53, SSD1780_COLOR_WHITE);
+    status = ssd1780_display_on(&display);
+    if (status != SSD1780_OK) {
+        uart_puts(&uart, "[SSD1780] ERROR TURNING ON\r\n");
+    } else {
+        uart_puts(&uart, "[SSD1780] ON\r\n");
     }
-    */
+
+    _delay_ms(200);
+    status = ssd1780_clear(&display, SSD1780_COLOR_BLACK);
+
+    if (status != SSD1780_OK) {
+        uart_puts(&uart, "[SSD1780] error on clear display\r\n");
+    } else {
+        uart_puts(&uart, "[SSD1780] display cleared\r\n");
+    }
+    _delay_ms(100);
+
+    status = ssd1780_draw_box(&display, 10, 10, 117, 53, SSD1780_COLOR_WHITE);
+    if (status != SSD1780_OK) {
+        uart_puts(&uart, "[SSD1780] error on drawing box\r\n");
+    } else {
+        uart_puts(&uart, "[SSD1780] box drawn\r\n");
+    }
+    while (1) {
+    }
 }
