@@ -4,3 +4,5 @@ main.hex
 build
 cache/**
 /.cache/
+embarcas.elf
+embarcas.hex
