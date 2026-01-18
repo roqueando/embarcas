@@ -76,21 +76,22 @@ int main(void) {
 
     _delay_ms(2000);
 
-    status = ssd1306_clear(&display);
-
-    if (status != SSD1306_OK) {
-        uart_puts(&uart, "[SSD1306] error on clear display\r\n");
-    } else {
-        uart_puts(&uart, "[SSD1306] display cleared\r\n");
-    }
-    _delay_ms(100);
-
-    status = ssd1306_draw_box(&display, 10, 10, 117, 53);
-    if (status != SSD1306_OK) {
-        uart_puts(&uart, "[SSD1306] error on drawing box\r\n");
-    } else {
-        uart_puts(&uart, "[SSD1306] box drawn\r\n");
-    }
     while (1) {
+        status = ssd1306_clear(&display);
+
+        if (status != SSD1306_OK) {
+            uart_puts(&uart, "[SSD1306] error on clear display\r\n");
+        } else {
+            uart_puts(&uart, "[SSD1306] display cleared\r\n");
+        }
+        _delay_ms(100);
+
+        status = ssd1306_draw_box(&display, 10, 10, 117, 53);
+        if (status != SSD1306_OK) {
+            uart_puts(&uart, "[SSD1306] error on drawing box\r\n");
+        } else {
+            uart_puts(&uart, "[SSD1306] box drawn\r\n");
+        }
+        _delay_ms(100);
     }
 }
