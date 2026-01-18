@@ -7,12 +7,22 @@
 #define SCL_PIN PB2
 #define SDA_PIN PB0
 
+static char nibble_to_hex(uint8_t nibble) {
+    nibble &= 0x0F;
+    return (nibble < 10) ? ('0' + nibble) : ('A' + nibble - 10);
+}
+
 int main(void) {
     uart_t uart = uart_init((uart_config_t){
         .tx_pin = PB3,
         .rx_pin = PB1,
         .baudrate = 9600
     });
+
+    _delay_ms(500);
+
+    uart_puts(&uart, "UART Test: ATtiny85\r\n");
+    uart_puts(&uart, "ABC123456789\r\n");
 
     i2c_t i2c = i2c_init((i2c_config_t){
         .sda_pin = SDA_PIN,
@@ -30,13 +40,14 @@ int main(void) {
         if (i2c_write_byte_wait_ack(&i2c, addr) == I2C_OK) {
             uint8_t found = 1;
             uart_puts(&uart, "Device found at: 0x");
-            uart_putc(&uart, (addr >> 4) | 0x0F);
+            uart_putc(&uart, nibble_to_hex(addr >> 4));
+            uart_putc(&uart, nibble_to_hex(addr));
             uart_puts(&uart, "\r\n");
 
             for (uint8_t reg = 0; reg < 0x10; reg++) {
                 if (i2c_read_reg(&i2c, addr, reg, &data) != I2C_OK) {
                     uart_puts(&uart, "  R");
-                    uart_putc(&uart, reg);
+                    uart_putc(&uart, nibble_to_hex(reg));
                     found = 1;
                 }
             }

@@ -3,62 +3,41 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "uart/uart.h"
-#include "util/atomic.h"
-
-#define RX_PIN       PB0
-#define TX_PIN       PB1
-
-#define CYCLES_PER_BIT (F_CPU / uart.config.baudrate)
-#define HALF_BIT_TICKS (CYCLES_PER_BIT / 2)
-#define TIMER_PRESCALER 8
-
-static uart_t uart;
-static volatile uint8_t rx_buffer[16];
-static volatile uint8_t rx_head = 0;
-static volatile uint8_t rx_tail = 0;
-static volatile uint8_t tx_buffer[16];
-static volatile uint8_t tx_head = 0;
-static volatile uint8_t tx_tail = 0;
-static volatile uint8_t uart_state = 0;
-
-static inline uint8_t reverse_byte(uint8_t x) {
-    x = ((x >> 1) & 0x55) | ((x << 1) & 0xaa);
-    x = ((x >> 2) & 0x33) | ((x << 2) & 0xcc);
-    x = ((x >> 4) & 0x0f) | ((x << 4) & 0xf0);
-    return x;
-}
 
 uart_t uart_init(uart_config_t config) {
+    DDRB |= (1 << config.tx_pin);
+    DDRB &= ~(1 << config.rx_pin);
+
+    PORTB |= (1 << config.tx_pin);
+    PORTB |= (1 << config.rx_pin);
+
+    uart_t uart;
     uart.config = config;
-
-    DDRB |= (1 << TX_PIN);
-    DDRB &= ~(1 << RX_PIN);
-
-    PORTB |= (1 << TX_PIN);
-    PORTB |= (1 << RX_PIN);
-
-    GIMSK &= ~(1 << PCIE);
-    PCMSK = 0;
-    TCCR0B = 0;
-    TIMSK = 0;
-    USICR = 0;
-
     uart.state = 0;
-
     return uart;
 }
 
 void uart_putc(uart_t *uart_ptr, uint8_t data) {
-    uint8_t next_head = (tx_head + 1) & 0x0F;
-    while (next_head == tx_tail);
+    uint8_t tx_pin_mask = 1 << uart_ptr->config.tx_pin;
+    uint8_t i;
 
-    tx_buffer[tx_head] = data;
-    tx_head = next_head;
+    // Start bit (LOW)
+    PORTB &= ~tx_pin_mask;
+    _delay_us(104);
 
-    if (!(TIMSK & (1 << TOIE0))) {
-        TIMSK |= (1 << TOIE0);
-        TCCR0B = (1 << CS01);
+    // 8 data bits, LSB first
+    for (i = 0; i < 8; i++) {
+        if (data & (1 << i)) {
+            PORTB |= tx_pin_mask;
+        } else {
+            PORTB &= ~tx_pin_mask;
+        }
+        _delay_us(104);
     }
+
+    // Stop bit (HIGH)
+    PORTB |= tx_pin_mask;
+    _delay_us(104);
 }
 
 void uart_puts(uart_t *uart_ptr, const char *str) {
@@ -69,104 +48,38 @@ void uart_puts(uart_t *uart_ptr, const char *str) {
 }
 
 uint8_t uart_getc(uart_t *uart_ptr, uint8_t *data, uint32_t timeout_us) {
+    uint8_t rx_pin_mask = 1 << uart_ptr->config.rx_pin;
+    uint8_t received_byte = 0;
+    uint8_t i;
     uint32_t start = 0;
 
-    while (rx_head == rx_tail && start < timeout_us) {
+    // Wait for start bit (LOW)
+    while (start < timeout_us) {
+        if (!(PINB & rx_pin_mask)) {
+            // Sample at middle of bit
+            _delay_us(52);
+
+            // Read 8 data bits, LSB first
+            for (i = 0; i < 8; i++) {
+                _delay_us(104);
+                if (PINB & rx_pin_mask) {
+                    received_byte |= (1 << i);
+                }
+            }
+
+            // Wait for stop bit
+            _delay_us(104);
+
+            *data = received_byte;
+            return 1;
+        }
         _delay_us(1);
         start++;
     }
 
-    if (rx_head == rx_tail) {
-        return 0;
-    }
-
-    *data = rx_buffer[rx_tail];
-    rx_tail = (rx_tail + 1) & 0x0F;
-    return 1;
+    return 0;
 }
 
 uint8_t uart_available(uart_t *uart_ptr) {
-    return (rx_head != rx_tail);
+    return !(PINB & (1 << uart_ptr->config.rx_pin));
 }
-
-ISR(PCINT0_vect) {
-    if (!(PINB & (1 << RX_PIN)) && uart.state == 0) {
-        GIMSK &= ~(1 << PCIE);
-
-        TCCR0A = (1 << WGM01);
-        TCCR0B = (1 << CS01);
-        TCNT0 = 0;
-        OCR0A = (F_CPU / uart.config.baudrate / TIMER_PRESCALER) / 2;
-
-        TIFR |= (1 << OCF0A);
-        TIMSK |= (1 << OCIE0A);
-
-        USISR = (1 << USIOIF) | 8;
-
-        USICR = (1 << USIOIE) | (0 << USIWM1) | (1 << USIWM0) | (1 << USICS0);
-
-        uart.state = 1;
-    }
-}
-
-ISR(TIM0_COMPA_vect) {
-    TIMSK &= ~(1 << OCIE0A);
-
-    TCNT0 = 0;
-    TCCR0B = (1 << CS01);
-    OCR0A = (F_CPU / uart.config.baudrate / TIMER_PRESCALER);
-
-    uart.state = 2;
-
-    if (uart.state == 3) {
-        TIMSK &= ~(1 << OCIE0A);
-        TCNT0 = 0;
-        TCCR0B = (1 << CS01);
-
-        tx_tail = (tx_tail + 1) & 0x0F;
-
-        if (tx_head == tx_tail) {
-            TIMSK &= ~(1 << TOIE0);
-            TCCR0B = 0;
-        }
-
-        uart.state = 0;
-    }
-}
-
-ISR(USI_OVF_vect) {
-    USICR = 0;
-
-    rx_buffer[rx_head] = reverse_byte(USIDR);
-    rx_head = (rx_head + 1) & 0x0F;
-
-    uart.state = 0;
-
-    GIFR |= (1 << PCIF);
-    GIMSK |= (1 << PCIE);
-    PCMSK |= (1 << PCINT0);
-}
-
-ISR(TIM0_OVF_vect) {
-    if (tx_head != tx_tail) {
-        if (uart.state == 0) {
-            USIDR = reverse_byte(tx_buffer[tx_tail]);
-            USISR = (1 << USIOIF);
-
-            uart.state = 3;
-            TCNT0 = 0;
-            TCCR0A = (1 << WGM01);
-            TCCR0B = (1 << CS01);
-            OCR0A = (F_CPU / uart.config.baudrate / TIMER_PRESCALER) / 2;
-
-            TIFR |= (1 << OCF0A);
-            TIMSK |= (1 << OCIE0A);
-
-            USICR = (1 << USIOIE) | (1 << USIWM0) | (1 << USICS0);
-        }
-    } else {
-        TIMSK &= ~(1 << TOIE0);
-        TCCR0B = 0;
-    }
-}
-
