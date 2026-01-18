@@ -147,8 +147,8 @@ void gpio_pcint_handler(void) {
     pcint_previous_state = current;
 }
 
-/*
+
 ISR(PCINT0_vect) {
     gpio_pcint_handler();
 }
-*/
+

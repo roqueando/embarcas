@@ -13,6 +13,7 @@ typedef enum {
 typedef struct {
     uint8_t i2c_address;
     i2c_t *i2c;
+    uint8_t rst_pin;
 } ssd1306_config_t;
 
 typedef struct {

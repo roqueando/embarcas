@@ -42,9 +42,38 @@ static void ssd1306_set_position(ssd1306_t *display, uint8_t x, uint8_t y) {
 
 ssd1306_status_t ssd1306_init(ssd1306_t *display, ssd1306_config_t config) {
     display->config = config;
+
+    // Reset if pin specified
+    if (config.rst_pin != 0xFF) {
+        DDRB |= (1 << config.rst_pin);
+        PORTB &= ~(1 << config.rst_pin);
+        _delay_ms(10);
+        PORTB |= (1 << config.rst_pin);
+        _delay_ms(10);
+    }
+
     _delay_ms(10);
 
-    ssd1306_write_cmd(display, 0xAE);
+    // Try both common I2C addresses
+    uint8_t addresses[] = {0x3C, 0x3D};
+
+    for (uint8_t i = 0; i < 2; i++) {
+        display->config.i2c_address = addresses[i];
+
+        if (i2c_start(display->config.i2c) == I2C_OK) {
+            if (i2c_address(display->config.i2c, addresses[i], 0) == I2C_OK) {
+                if (i2c_write_byte(display->config.i2c, 0xAE) == I2C_OK) {
+                    i2c_stop(display->config.i2c);
+                    goto init_ok;
+                }
+            }
+            i2c_stop(display->config.i2c);
+        }
+    }
+
+    return SSD1306_ERR_I2C;
+
+init_ok:
     ssd1306_write_cmd(display, 0xD5);
     ssd1306_write_cmd(display, 0x80);
     ssd1306_write_cmd(display, 0xA8);

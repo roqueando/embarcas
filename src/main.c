@@ -1,18 +1,48 @@
 #include "attiny85.h"
 #include "gpio/gpio.h"
-#include "usi/i2c.h"
-#include "ssd1306/ssd1306.h"
+//#include "usi/i2c.h"
+//#include "ssd1306/ssd1306.h"
 #include <util/delay.h>
 
 #define SCL_PIN PB2
 #define SDA_PIN PB0
+#define DBG_LED GPIO_PB3
 
 static char nibble_to_hex(uint8_t nibble) {
     nibble &= 0x0F;
     return (nibble < 10) ? ('0' + nibble) : ('A' + nibble - 10);
 }
 
+void gpio_pcint_cb(gpio_pin_t pin) {
+  if(gpio_is_high(pin)) {
+    gpio_write(DBG_LED, GPIO_HIGH);
+  } else {
+    gpio_write(DBG_LED, GPIO_LOW);
+  }
+}
+
+void init_input_sensor() {
+  gpio_pin_t input_sensor_port = GPIO_PB1;
+  gpio_mode_t input_sensor_mode = GPIO_MODE_INPUT;
+  gpio_pcint_mode_t input_sensor_interrupt = GPIO_PCINT_ANY;
+
+  gpio_init(input_sensor_port, input_sensor_mode);
+  gpio_set_input(input_sensor_port);
+  //gpio_set_input_pullup(input_sensor_port);
+  gpio_enable_pcint(input_sensor_port, gpio_pcint_cb);
+}
+
 int main(void) {
+  sei();
+  gpio_pin_t dbg_led = GPIO_PB3;
+  gpio_mode_t dbg_led_mode = GPIO_MODE_OUTPUT;
+
+  gpio_init(dbg_led, dbg_led_mode);
+  gpio_set_output(dbg_led);
+
+  init_input_sensor();
+
+  /*
     uart_t uart = uart_init((uart_config_t){
         .tx_pin = PB3,
         .rx_pin = PB1,
@@ -44,7 +74,8 @@ int main(void) {
     for (retries = 0; retries < 3; retries++) {
         status = ssd1306_init(&display, (ssd1306_config_t){
             .i2c_address = 0x3C,
-            .i2c = &i2c
+            .i2c = &i2c,
+            .rst_pin = 0xFF
         });
 
         _delay_ms(10);
@@ -94,4 +125,5 @@ int main(void) {
         }
         _delay_ms(100);
     }
+  */
 }
