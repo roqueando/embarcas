@@ -1,119 +1,216 @@
-/**
- * @file usi_i2c.c
- * @brief USI I2C implementation for ATtiny85
- */
-
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "usi/i2c.h"
 
-static uint8_t usi_data;
+#define SDA_PIN     (1 << PB0)
+#define SCL_PIN     (1 << PB2)
 
-i2c_t i2c_init(i2c_config_t config) {
-    DDRB |= (1 << config.sda_pin);
-    DDRB &= ~(1 << config.scl_pin);
-    PORTB &= ~((1 << config.sda_pin) | (1 << config.scl_pin));
+#define USI_2WIRE_MODE   ((1 << USIWM1) | (0 << USIWM0))
+#define USI_EXTERNAL_CLOCK ((1 << USICS1) | (0 << USICS0))
+#define USI_STROBE_CLOCK ((1 << USICLK) | (1 << USITC))
 
-    USICR = (1 << USIWM1) | (1 << USICS1) | (1 << USIWM0);
+static i2c_config_t config;
 
-    i2c_t i2c = { .config = config };
+static inline void usi_delay(void) {
+    uint8_t i;
+    for (i = 0; i < 10; i++) {
+        __builtin_avr_delay_cycles(1);
+    }
+}
+
+static void i2c_release_scl(void) {
+    DDRB &= ~SCL_PIN;
+    PORTB |= SCL_PIN;
+}
+
+static void i2c_release_sda(void) {
+    DDRB &= ~SDA_PIN;
+    PORTB |= SDA_PIN;
+}
+
+static void i2c_drive_scl_low(void) {
+    DDRB |= SCL_PIN;
+    PORTB &= ~SCL_PIN;
+}
+
+static void i2c_drive_sda_low(void) {
+    DDRB |= SDA_PIN;
+    PORTB &= ~SDA_PIN;
+}
+
+static void i2c_drive_sda_high(void) {
+    DDRB |= SDA_PIN;
+    PORTB |= SDA_PIN;
+}
+
+i2c_t i2c_init(i2c_config_t cfg) {
+    config = cfg;
+
+    i2c_release_scl();
+    i2c_release_sda();
+
+    _delay_ms(1);
+
+    i2c_t i2c = { .config = cfg };
     return i2c;
 }
 
 i2c_status_t i2c_start(i2c_t *i2c) {
-    PORTB |= (1 << i2c->config.sda_pin);
+    i2c_release_scl();
+    i2c_release_sda();
+    usi_delay();
 
-    for (uint8_t i = 0; i < 20; i++) {
-        _delay_us(1);
-    }
+    i2c_drive_sda_low();
+    usi_delay();
 
-    PORTB &= ~(1 << i2c->config.sda_pin);
+    i2c_drive_scl_low();
+    usi_delay();
+
     return I2C_OK;
 }
 
 i2c_status_t i2c_stop(i2c_t *i2c) {
-    PORTB &= ~((1 << i2c->config.sda_pin) | (1 << i2c->config.scl_pin));
+    i2c_drive_sda_low();
+    usi_delay();
+
+    i2c_release_scl();
+    usi_delay();
+
+    i2c_release_sda();
+    usi_delay();
+
     return I2C_OK;
+}
+
+static uint8_t i2c_write_byte_usi(i2c_t *i2c, uint8_t data) {
+    uint8_t tempUSISR;
+
+    USIDR = data;
+    USISR = (1 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) | (0x0 << USICNT0);
+
+    tempUSISR = USI_2WIRE_MODE | USI_EXTERNAL_CLOCK | USI_STROBE_CLOCK;
+
+    do {
+        USICR = tempUSISR;
+        while (!(PINB & SCL_PIN));
+        USICR = tempUSISR;
+        while (PINB & SCL_PIN);
+        usi_delay();
+    } while (!(USISR & (1 << USIOIF)));
+
+    DDRB &= ~SDA_PIN;
+    PORTB |= SDA_PIN;
+
+    USIDR = 0xFF;
+    USISR = (1 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) | (0xE << USICNT0);
+
+    tempUSISR = USI_2WIRE_MODE | USI_EXTERNAL_CLOCK | USI_STROBE_CLOCK;
+
+    USICR = tempUSISR;
+    while (!(PINB & SCL_PIN));
+
+    uint8_t ack = (PINB & SDA_PIN) ? 1 : 0;
+
+    USICR = tempUSISR;
+    while (PINB & SCL_PIN);
+
+    DDRB |= SDA_PIN;
+
+    return ack ? I2C_ERR_NACK : I2C_OK;
 }
 
 i2c_status_t i2c_write_byte(i2c_t *i2c, uint8_t data) {
-    USIDR = data;
-
-    for (uint8_t i = 0; i < 8; i++) {
-        asm volatile("nop");
-    }
-
-    return I2C_OK;
+    return i2c_write_byte_usi(i2c, data);
 }
 
 i2c_status_t i2c_write_byte_wait_ack(i2c_t *i2c, uint8_t data) {
-    USIDR = data;
+    return i2c_write_byte_usi(i2c, data);
+}
 
-    for (uint8_t i = 0; i < 8; i++) {
-        asm volatile("nop");
-    }
+static uint8_t i2c_read_byte_usi(i2c_t *i2c, uint8_t ack) {
+    uint8_t tempUSISR;
 
-    PORTB &= ~(1 << i2c->config.scl_pin);
+    USIDR = 0xFF;
+    USISR = (1 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) | (0x0 << USICNT0);
 
-    for (uint16_t i = 0; i < i2c->config.timeout_us / 10; i++) {
-        if (PINB & (1 << i2c->config.sda_pin)) {
-            break;
-        }
-        _delay_us(10);
-    }
+    DDRB &= ~SDA_PIN;
+    PORTB |= SDA_PIN;
 
-    if (PINB & (1 << i2c->config.sda_pin)) {
-        return I2C_ERR_NACK;
-    }
+    tempUSISR = USI_2WIRE_MODE | USI_EXTERNAL_CLOCK | USI_STROBE_CLOCK;
 
-    return I2C_OK;
+    do {
+        USICR = tempUSISR;
+        while (!(PINB & SCL_PIN));
+        USICR = tempUSISR;
+        while (PINB & SCL_PIN);
+        usi_delay();
+    } while (!(USISR & (1 << USIOIF)));
+
+    uint8_t data = USIDR;
+
+    USIDR = ack ? 0xFF : 0x00;
+    USISR = (1 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) | (0xE << USICNT0);
+
+    USICR = tempUSISR;
+    while (!(PINB & SCL_PIN));
+    USICR = tempUSISR;
+    while (PINB & SCL_PIN);
+
+    DDRB |= SDA_PIN;
+    PORTB |= SDA_PIN;
+
+    return data;
 }
 
 i2c_status_t i2c_read_byte(i2c_t *i2c, uint8_t *data) {
-    *data = 0xFF;
-
-    for (uint8_t i = 0; i < 8; i++) {
-        USIDR = 0x00;
-        asm volatile("nop");
-        if (i < 7) {
-            *data |= USIBR;
-        }
-        asm volatile("nop");
-    }
-
+    *data = i2c_read_byte_usi(i2c, 0);
     return I2C_OK;
 }
 
 i2c_status_t i2c_address(i2c_t *i2c, uint8_t address, uint8_t read_write) {
-    i2c_start(i2c);
+    i2c_status_t status;
+
+    status = i2c_start(i2c);
+    if (status != I2C_OK) return status;
 
     uint8_t addr_byte = (address << 1) | read_write;
-
-    if (i2c_write_byte_wait_ack(i2c, addr_byte) != I2C_OK) {
-        return I2C_ERR_BUS_ERROR;
-    }
-
-    return I2C_OK;
+    return i2c_write_byte(i2c, addr_byte);
 }
 
 i2c_status_t i2c_read_reg(i2c_t *i2c, uint8_t address, uint8_t reg, uint8_t *data) {
-    i2c_address(i2c, address, 0);
+    i2c_status_t status;
 
-    if (i2c_write_byte_wait_ack(i2c, reg) != I2C_OK) {
-        return I2C_ERR_BUS_ERROR;
-    }
+    status = i2c_address(i2c, address, 0);
+    if (status != I2C_OK) return status;
 
-    return i2c_read_byte(i2c, data);
+    status = i2c_write_byte(i2c, reg);
+    if (status != I2C_OK) return status;
+
+    status = i2c_start(i2c);
+    if (status != I2C_OK) return status;
+
+    status = i2c_address(i2c, address, 1);
+    if (status != I2C_OK) return status;
+
+    *data = i2c_read_byte_usi(i2c, 1);
+    i2c_stop(i2c);
+    return I2C_OK;
 }
 
 i2c_status_t i2c_write_reg(i2c_t *i2c, uint8_t address, uint8_t reg, uint8_t data) {
-    i2c_address(i2c, address, 0);
+    i2c_status_t status;
 
-    if (i2c_write_byte_wait_ack(i2c, reg) != I2C_OK) {
-        return I2C_ERR_BUS_ERROR;
-    }
+    status = i2c_address(i2c, address, 0);
+    if (status != I2C_OK) return status;
 
-    return i2c_write_byte_wait_ack(i2c, data);
+    status = i2c_write_byte(i2c, reg);
+    if (status != I2C_OK) return status;
+
+    status = i2c_write_byte(i2c, data);
+    if (status != I2C_OK) return status;
+
+    i2c_stop(i2c);
+    return I2C_OK;
 }

@@ -1,9 +1,29 @@
 /**
  * @file uart.h
- * @brief UART bit-banging for ATtiny85
+ * @brief UART using USI + Timer0 for ATtiny85
  *
- * ATtiny85 has no hardware UART, so we implement
- * software (bit-banging) UART for basic communication.
+ * ATtiny85 has no hardware UART. This implementation uses
+ * USI Three-Wire mode combined with Timer0 for half-duplex UART.
+ *
+ * Implementation:
+ * - Timer0 in CTC mode generates bit timing for baud rate
+ * - Pin change interrupt detects start bit on RX line
+ * - USI Three-Wire mode shifts data bits (8 bits = 16 clock edges)
+ * - Half-duplex operation (transmit OR receive, not both simultaneously)
+ * - Bit reversal required (UART LSB-first, USI MSB-first)
+ *
+ * Benefits over pure bitbanging:
+ * - ~30-40% smaller code size
+ * - Lower CPU usage (Timer0 handles timing)
+ * - More accurate baud rate generation
+ * - Hardware-assisted bit shifting via USI
+ *
+ * Hardware:
+ * - RX: PB0 (pin 5) - USI DI for receive
+ * - TX: PB1 (pin 6) - USI DO for transmit
+ * - Uses Timer0 for baud rate generation
+ *
+ * Based on: AVR307 Application Note - Half Duplex UART Using USI Module
  */
 
 #ifndef HAL_UART_H
@@ -31,6 +51,7 @@ typedef struct {
  */
 typedef struct {
     uart_config_t config;
+    uint8_t state;
 } uart_t;
 
 /**

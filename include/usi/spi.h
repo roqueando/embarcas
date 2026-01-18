@@ -2,8 +2,30 @@
  * @file spi.h
  * @brief USI SPI Master mode for ATtiny85
  *
- * ATtiny85 has a Universal Serial Interface (USI) that can be configured
- * for SPI master mode. Supports SPI modes 0-3 with selectable bit order.
+ * ATtiny85 has a Universal Serial Interface (USI) that provides
+ * hardware-assisted SPI master mode with Three-Wire configuration.
+ *
+ * Implementation:
+ * - Uses USI Three-Wire mode (USIWM0=1, USIWM1=0)
+ * - Software clock strobe via USITC bit for SCK generation
+ * - USI 4-bit counter (USICNT) tracks clock edges
+ * - Automatic counter overflow detection (USIOIF flag)
+ * - Atomic block for consistent timing during transfers
+ *
+ * Benefits over bitbanging:
+ * - ~40-50% smaller code size
+ * - Lower CPU usage during transfers
+ * - More consistent clock timing
+ * - Hardware-assisted bit shifting
+ *
+ * Hardware:
+ * - MOSI: PB0 (pin 5) - USI DO
+ * - MISO: PB1 (pin 6) - USI DI
+ * - SCK:  PB2 (pin 7) - USI USCK
+ *
+ * Note: No dedicated SS pin - must be implemented in software
+ *
+ * Based on: AVR319 Application Note - Using USI for SPI Communication
  */
 
 #ifndef HAL_USI_SPI_H

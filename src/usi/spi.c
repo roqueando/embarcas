@@ -1,52 +1,64 @@
-/**
- * @file usi_spi.c
- * @brief USI SPI implementation for ATtiny85
- */
-
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "usi/spi.h"
 
-static uint8_t usi_data = 0;
+#define USI_THREE_WIRE_MODE ((1 << USIWM0) | (0 << USIWM1))
+#define USI_EXTERNAL_CLOCK    ((1 << USICS1) | (0 << USICS0))
+#define USI_STROBE_CLOCK    ((1 << USICLK) | (1 << USITC))
 
 spi_t spi_init(spi_config_t config) {
+    uint8_t usicr_value;
+
     DDRB |= (1 << config.sclk_pin) | (1 << config.mosi_pin);
     DDRB &= ~(1 << config.miso_pin);
 
-    USICR = (1 << USIWM0) | (1 << USICS1);
+    PORTB &= ~((1 << config.mosi_pin) | (1 << config.miso_pin) | (1 << config.sclk_pin));
+
+    usicr_value = USI_THREE_WIRE_MODE;
 
     switch (config.mode) {
         case SPI_MODE_0:
-            USICR &= ~((1 << USIWM1) | (1 << USICS1));
+            usicr_value |= USI_EXTERNAL_CLOCK;
             break;
         case SPI_MODE_1:
-            USICR &= ~(1 << USIWM1);
-            USICR |= (1 << USICS1);
+            usicr_value |= USI_EXTERNAL_CLOCK | (1 << USICS0);
             break;
         case SPI_MODE_2:
-            USICR |= (1 << USIWM1) | (1 << USICS1);
+            usicr_value |= USI_EXTERNAL_CLOCK;
             break;
         case SPI_MODE_3:
-            USICR |= (1 << USIWM1);
-            USICR &= ~(1 << USICS1);
+            usicr_value |= USI_EXTERNAL_CLOCK | (1 << USICS0);
             break;
     }
 
-    PORTB &= ~((1 << config.mosi_pin) | (1 << config.miso_pin) | (1 << config.sclk_pin));
+    USICR = usicr_value;
 
     spi_t spi = { .config = config };
     return spi;
 }
 
 uint8_t spi_transfer(spi_t *spi, uint8_t data) {
+    uint8_t tempUSISR;
+    uint8_t usicr_value;
+    uint8_t sreg;
+
     USIDR = data;
+    USISR = (1 << USIOIF);
 
-    for (uint8_t i = 0; i < 8; i++) {
-        asm volatile("nop");
-    }
+    tempUSISR = USI_THREE_WIRE_MODE | USI_EXTERNAL_CLOCK | USI_STROBE_CLOCK;
 
-    return USIDR;
+    sreg = SREG;
+    cli();
+
+    do {
+        USICR = tempUSISR;
+        while (!(USISR & (1 << USIOIF)));
+    } while (1);
+
+    SREG = sreg;
+
+    return USIBR;
 }
 
 void spi_transfer_buf(spi_t *spi, const uint8_t *tx, uint8_t *rx, uint16_t len) {
