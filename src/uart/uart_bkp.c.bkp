@@ -1,0 +1,99 @@
+/**
+ * @file uart.c
+ * @brief UART bit-banging implementation for ATtiny85
+ */
+
+#include <stdint.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include "uart/uart.h"
+
+static uart_t uart;
+
+static void delay_us_runtime(uint16_t us) {
+    // Calculate cycles per microsecond based on F_CPU
+    // This makes the function work correctly for different clock speeds
+    while (us--) {
+        #if F_CPU == 16000000UL
+            __builtin_avr_delay_cycles(16);  // 16 cycles = 1us at 16MHz
+        #elif F_CPU == 8000000UL
+            __builtin_avr_delay_cycles(8);   // 8 cycles = 1us at 8MHz
+        #elif F_CPU == 1000000UL
+            __builtin_avr_delay_cycles(1);   // 1 cycle = 1us at 1MHz
+        #else
+            #error "Unsupported F_CPU value"
+        #endif
+    }
+}
+
+uart_t uart_init(uart_config_t config) {
+    DDRB |= (1 << config.tx_pin);
+    DDRB &= ~(1 << config.rx_pin);
+
+    // Set TX pin HIGH (idle state for UART)
+    PORTB |= (1 << config.tx_pin);
+    // Enable pull-up on RX pin
+    PORTB |= (1 << config.rx_pin);
+
+    uart.config = config;
+    return uart;
+}
+
+void uart_putc(uart_t *uart, uint8_t data) {
+    uint16_t bit_delay = 1000000UL / uart->config.baudrate;
+
+    PORTB &= ~(1 << uart->config.tx_pin);
+    delay_us_runtime(bit_delay);
+
+    for (uint8_t i = 0; i < 8; i++) {
+        if (data & (1 << i)) {
+            PORTB |= (1 << uart->config.tx_pin);
+        } else {
+            PORTB &= ~(1 << uart->config.tx_pin);
+        }
+        delay_us_runtime(bit_delay);
+    }
+
+    PORTB |= (1 << uart->config.tx_pin);
+    delay_us_runtime(bit_delay);
+}
+
+void uart_puts(uart_t *uart, const char *str) {
+    while (*str) {
+        uart_putc(uart, (uint8_t)*str);
+        str++;
+    }
+}
+
+uint8_t uart_getc(uart_t *uart, uint8_t *data, uint32_t timeout_us) {
+    uint16_t bit_delay = 1000000UL / uart->config.baudrate;
+    uint16_t half_bit = bit_delay / 2;
+    uint8_t received_byte = 0;
+
+    for (uint32_t start = 0; start < timeout_us; start++) {
+        if (!(PINB & (1 << uart->config.rx_pin))) {
+            delay_us_runtime(half_bit);
+
+            for (uint8_t i = 0; i < 8; i++) {
+                delay_us_runtime(bit_delay);
+                if (PINB & (1 << uart->config.rx_pin)) {
+                    received_byte |= (1 << i);
+                }
+            }
+
+            delay_us_runtime(bit_delay);
+
+            *data = received_byte;
+            return 1;
+        }
+        delay_us_runtime(1);
+    }
+
+    return 0;
+}
+
+uint8_t uart_available(uart_t *uart) {
+    // Start bit detected when RX line is LOW
+    return !(PINB & (1 << uart->config.rx_pin));
+}
