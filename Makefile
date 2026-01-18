@@ -10,7 +10,7 @@ LDFLAGS =
 PROGRAMMER_TYPE = micronucleus
 
 SRC_DIR = src
-SRC = $(SRC_DIR)/main.c $(SRC_DIR)/uart/uart.c $(SRC_DIR)/usi/i2c.c $(SRC_DIR)/usi/spi.c $(SRC_DIR)/ssd1306/ssd1306.c $(SRC_DIR)/adc/adc.c $(SRC_DIR)/eeprom/eeprom.c $(SRC_DIR)/gpio/gpio.c $(SRC_DIR)/power/power.c $(SRC_DIR)/timer/timer0.c
+SRC = $(SRC_DIR)/main.c $(SRC_DIR)/uart/uart.c $(SRC_DIR)/usi/i2c.c $(SRC_DIR)/usi/spi.c $(SRC_DIR)/ssd1780/ssd1780.c $(SRC_DIR)/ssd1306/ssd1306.c $(SRC_DIR)/adc/adc.c $(SRC_DIR)/eeprom/eeprom.c $(SRC_DIR)/gpio/gpio.c $(SRC_DIR)/power/power.c $(SRC_DIR)/timer/timer0.c
 OBJ     = $(SRC:.c=.o)
 
 TARGET  = embarcas
