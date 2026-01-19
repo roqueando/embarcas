@@ -1,12 +1,19 @@
 #include "attiny85.h"
 #include "gpio/gpio.h"
+#include "adc/adc.h"
+#include <stdio.h>
 //#include "usi/i2c.h"
 //#include "ssd1306/ssd1306.h"
 #include <util/delay.h>
 
-#define SCL_PIN PB2
-#define SDA_PIN PB0
+//#define SCL_PIN PB2
+//#define SDA_PIN PB0
 #define DBG_LED GPIO_PB3
+#define SENSOR_PIN PB2
+
+volatile uint8_t pressed = 0;
+volatile uint16_t sensor_value = 0;
+volatile uint8_t data_ready = 0;
 
 static char nibble_to_hex(uint8_t nibble) {
     nibble &= 0x0F;
@@ -14,16 +21,14 @@ static char nibble_to_hex(uint8_t nibble) {
 }
 
 void gpio_pcint_cb(gpio_pin_t pin) {
-  if(gpio_is_high(pin)) {
-    gpio_write(DBG_LED, GPIO_HIGH);
-  } else {
-    gpio_write(DBG_LED, GPIO_LOW);
+  if ((pin == GPIO_PB1)) {
+    pressed = 1;
   }
 }
 
 void init_input_sensor() {
   gpio_pin_t input_sensor_port = GPIO_PB1;
-  gpio_mode_t input_sensor_mode = GPIO_MODE_INPUT;
+  gpio_mode_t input_sensor_mode = GPIO_MODE_INPUT_PULLUP;
   gpio_pcint_mode_t input_sensor_interrupt = GPIO_PCINT_ANY;
 
   gpio_init(input_sensor_port, input_sensor_mode);
@@ -32,27 +37,58 @@ void init_input_sensor() {
   gpio_enable_pcint(input_sensor_port, gpio_pcint_cb);
 }
 
-int main(void) {
-  sei();
+void init_dbg_led() {
   gpio_pin_t dbg_led = GPIO_PB3;
   gpio_mode_t dbg_led_mode = GPIO_MODE_OUTPUT;
 
   gpio_init(dbg_led, dbg_led_mode);
   gpio_set_output(dbg_led);
+}
 
+int main(void) {
+  sei();
+
+  uart_t uart = uart_init(
+      (uart_config_t){.tx_pin = PB5, .rx_pin = PB4, .baudrate = 9600});
+
+  _delay_ms(500);
+
+  uart_puts(&uart, "EMBARCAS INITIALIZING...\r\n");
+  init_dbg_led();
   init_input_sensor();
 
+  uart_puts(&uart, "enabling ADC...\r\n");
+  adc_reference_t adc_ref = ADC_REF_VCC;
+  adc_prescaler_t adc_prescaler = ADC_PRESCALER_128;
+  adc_t sensor_adc = adc_init(adc_ref, adc_prescaler);
+
+  adc_enable(&sensor_adc);
+  char str[100];
+  sprintf(str, "ADC enabled on channel: %d\r\n", sensor_adc.channel);
+  uart_puts(&uart, str);
+  _delay_ms(500);
+
+  while (1) {
+    if (adc_read_start(&sensor_adc, ADC_CHANNEL_1) == ADC_BUSY) {
+      uint16_t result;
+      while (adc_read_poll(&sensor_adc, &result) == ADC_BUSY) {
+        // 
+      }
+
+      sensor_value = result;
+      char str_sense[100];
+      sprintf(str_sense, "[SENSOR VALUE READY]: %d\r\n", sensor_value);
+      uart_puts(&uart, str_sense);
+    }
+
+    if(pressed) {
+      pressed = 0;
+      gpio_toggle(GPIO_PB3);
+    }
+    _delay_ms(50);
+  }
+
   /*
-    uart_t uart = uart_init((uart_config_t){
-        .tx_pin = PB3,
-        .rx_pin = PB1,
-        .baudrate = 9600
-    });
-
-    _delay_ms(500);
-
-    uart_puts(&uart, "EMBARCAS INITIALIZING...\r\n");
-
     i2c_t i2c = i2c_init((i2c_config_t){
         .sda_pin = SDA_PIN,
         .scl_pin = SCL_PIN,

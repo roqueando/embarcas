@@ -41,6 +41,7 @@ typedef enum {
 typedef enum {
     GPIO_MODE_INPUT,          ///< Input with high impedance (floating)
     GPIO_MODE_INPUT_PULLUP,  ///< Input with internal pull-up resistor enabled
+    GPIO_MODE_INPUT_PULLDOWN, ///< Input mode - requires external pull-down (ATtiny85 has no internal pull-down)
     GPIO_MODE_OUTPUT,         ///< Output push-pull
     GPIO_MODE_ANALOG,         ///< Analog input (disables digital input buffer)
 } gpio_mode_t;

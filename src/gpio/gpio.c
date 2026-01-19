@@ -27,6 +27,11 @@ void gpio_init(gpio_pin_t pin, gpio_mode_t mode) {
             PORTB |= bit;
             break;
 
+        case GPIO_MODE_INPUT_PULLDOWN:
+            DDRB &= ~bit;
+            PORTB &= ~bit;
+            break;
+
         case GPIO_MODE_OUTPUT:
             DDRB |= bit;
             PORTB &= ~bit;
